@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 
 /.quarto/
+
+# Generated PDF files for printing
+*.pdf

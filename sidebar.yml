@@ -8,3 +8,4 @@ website:
       - 03_spacy_ner.ipynb
       - 04_ner_crf.ipynb
       - 05_ner_pytorch.ipynb
+      - 06_text_classification_sklearn.ipynb

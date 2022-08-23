@@ -168,7 +168,7 @@ sorted_labels = sorted(
 # Here: pip install git+https://github.com/MeMartijn/updated-sklearn-crfsuite.git\#egg=sklearn_crfsuite
 print(metrics.flat_classification_report(y_test, y_pred, labels=sorted_labels))
 
-# %% ../04_ner_crf.ipynb 31
+# %% ../04_ner_crf.ipynb 30
 import scipy
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import RandomizedSearchCV
@@ -196,12 +196,12 @@ rs = RandomizedSearchCV(crf, params_space,
                         scoring=f1_scorer)
 rs.fit(X_train, y_train)
 
-# %% ../04_ner_crf.ipynb 33
+# %% ../04_ner_crf.ipynb 32
 print('best params:', rs.best_params_)
 print('best CV score:', rs.best_score_)
 print('model size: {:0.2f}M'.format(rs.best_estimator_.size_ / 1000000))
 
-# %% ../04_ner_crf.ipynb 34
+# %% ../04_ner_crf.ipynb 33
 best_crf = rs.best_estimator_
 y_pred = best_crf.predict(X_test)
 print(metrics.flat_classification_report(

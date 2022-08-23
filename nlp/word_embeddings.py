@@ -4,7 +4,7 @@
 __all__ = ['documents', 'model', 'target_word', 'selected_words', 'embeddings', 'mapped_embeddings', 'x', 'y', 'nlp', 'word2pos',
            'sizes', 'windows', 'df', 'Corpus', 'evaluate']
 
-# %% ../00_word_embeddings.ipynb 3
+# %% ../00_word_embeddings.ipynb 4
 import sys
 import os
 import csv
@@ -24,36 +24,34 @@ class Corpus(object):
 
 documents = Corpus("/home/peter/Documents/data/nlp/arxiv.csv")
 
-# %% ../00_word_embeddings.ipynb 5
+# %% ../00_word_embeddings.ipynb 6
 import gensim
 
 model = gensim.models.Word2Vec(documents, min_count=100, window=5, vector_size=100)
 
-# %% ../00_word_embeddings.ipynb 7
+# %% ../00_word_embeddings.ipynb 8
 model.wv["nlp"]
 
-# %% ../00_word_embeddings.ipynb 9
+# %% ../00_word_embeddings.ipynb 10
 print(model.wv.similarity("nmt", "smt"))
 print(model.wv.similarity("nmt", "ner"))
 
-# %% ../00_word_embeddings.ipynb 11
+# %% ../00_word_embeddings.ipynb 12
 model.wv.similar_by_word("bert", topn=10)
 
-# %% ../00_word_embeddings.ipynb 13
+# %% ../00_word_embeddings.ipynb 14
 model.wv.most_similar(positive=["transformer", "lstm"], negative=["bert"], topn=1)
 
-# %% ../00_word_embeddings.ipynb 15
+# %% ../00_word_embeddings.ipynb 16
 model.wv.most_similar(positive=["tree"], topn=10)
 
-# %% ../00_word_embeddings.ipynb 17
+# %% ../00_word_embeddings.ipynb 18
 model.wv.most_similar(positive=["tree"], negative=["syntax"], topn=10)
 
-# %% ../00_word_embeddings.ipynb 19
+# %% ../00_word_embeddings.ipynb 20
 print(model.wv.doesnt_match("lst cnn gru transformer svm".split()))
 
-# %% ../00_word_embeddings.ipynb 21
-#%matplotlib inline
-
+# %% ../00_word_embeddings.ipynb 22
 import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
@@ -66,7 +64,7 @@ embeddings = [model.wv[w] for w in selected_words] + model.wv["bert"]
 
 mapped_embeddings = TSNE(n_components=2, metric='cosine', init='pca').fit_transform(embeddings)
 
-# %% ../00_word_embeddings.ipynb 22
+# %% ../00_word_embeddings.ipynb 23
 plt.figure(figsize=(20,20))
 x = mapped_embeddings[:,0]
 y = mapped_embeddings[:,1]
@@ -75,7 +73,7 @@ plt.scatter(x, y)
 for i, txt in enumerate(selected_words):
     plt.annotate(txt, (x[i], y[i]))
 
-# %% ../00_word_embeddings.ipynb 24
+# %% ../00_word_embeddings.ipynb 25
 import spacy
 
 nlp = spacy.load('en_core_web_sm')
@@ -86,7 +84,7 @@ for word in model.wv.key_to_index: # model call can be
 
 word2pos["translation"]
 
-# %% ../00_word_embeddings.ipynb 25
+# %% ../00_word_embeddings.ipynb 26
 import numpy as np
 
 def evaluate(model, word2pos):
@@ -100,7 +98,7 @@ def evaluate(model, word2pos):
 evaluate(model, word2pos)
 
 
-# %% ../00_word_embeddings.ipynb 27
+# %% ../00_word_embeddings.ipynb 28
 sizes = [100, 200, 300]
 windows = [2,5,10]
 
@@ -115,5 +113,5 @@ for size in sizes:
         
 df
 
-# %% ../00_word_embeddings.ipynb 29
+# %% ../00_word_embeddings.ipynb 30
 df.plot()

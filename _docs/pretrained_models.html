@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>nlp - NLP with pre-trained models: spaCy and Stanford NLP</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="nlp - NLP with pre-trained models: spaCy and Stanford NLP">
+<meta property="og:description" content="By applying the spaCy model we assigned to the variable en. We can generate a processed document wit spaCy, doc_en that has sentences and tokens:">
+<meta property="og:site-name" content="nlp">
+<meta name="twitter:title" content="nlp - NLP with pre-trained models: spaCy and Stanford NLP">
+<meta name="twitter:description" content="By applying the spaCy model we assigned to the variable en. We can generate a processed document wit spaCy, doc_en that has sentences and tokens:">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">nlp</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/pvanhuisstede/nlp/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div class="quarto-toggle-container">
+                  <a href="" class="quarto-reader-toggle nav-link" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">NLP with pre-trained models: spaCy and Stanford NLP</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">NLP Telematika tutorials</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./word_embeddings.html" class="sidebar-item-text sidebar-link">An introduction to word embeddings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pretrained_models.html" class="sidebar-item-text sidebar-link active">NLP with pre-trained models: spaCy and Stanford NLP</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./discovering_topics.html" class="sidebar-item-text sidebar-link">Discovering and Visualizing Topics in Texts</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./spacy_ner.html" class="sidebar-item-text sidebar-link">Updating spaCy’s NER system</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ner_crf.html" class="sidebar-item-text sidebar-link">NER with Conditional Random Fields (CRF)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ner_pytorch.html" class="sidebar-item-text sidebar-link">NER with PyTorch</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text_classification_sklearn.html" class="sidebar-item-text sidebar-link">“Traditional” Text Classification with Scikit-learn</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#multilingual-nlp" id="toc-multilingual-nlp" class="nav-link active" data-scroll-target="#multilingual-nlp">Multilingual NLP</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/pvanhuisstede/nlp/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">NLP with pre-trained models: spaCy and Stanford NLP</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>By applying the spaCy model we assigned to the variable <code>en</code>. We can generate a processed document wit spaCy, <code>doc_en</code> that has sentences and tokens:</p>
+<p>spaCy also identifies a number of linguistic features for every token: <code>lemma</code>, <code>pos_</code> (the universal POS tags), and <code>tag_</code>(contains the more finegrained, language-specific POS tags):</p>
+<p>spaCy also offers pre-trained models for NER (Named Entity Recognition). The results can be found on the <code>ent_iob_</code> and <code>ent_type_</code> attributes.</p>
+<p>The <code>ent_type_</code> attribute informs us about what type of entity the token refers to: ‘Donald Trump’ =&gt; person, ‘June 14, 1946’ =&gt; date, ‘45th’ =&gt; ordinal number, and ‘the United States’ =&gt; GPE (Geo Political Entity).</p>
+<p>The <code>ent_iob_</code> attribute gives, by way of the letters ‘I,O,B’ the position of the token in the entity, where <code>O</code> means that the token is outside of an entity, <code>B</code> the entity is at the beginning of a token, and <code>I</code> means it is inside a token. So basically the IOB scheme gives you information about begin and parts of entities (positional).</p>
+<p>We can access the recognized entities directly when we use the <code>ents</code> attribute of the document directly:</p>
+<p>On top of all this, the spaCy model also has a dependency parser on board that analyzes the grammatical realtions between the tokens:</p>
+<p>We display the results, kept in the variable <code>syntax</code>, in the usual way:</p>
+<div class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>display(display_html(tabulate.tabulate(syntax, tablefmt<span class="op">=</span><span class="st">'html'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<table>
+<tbody>
+<tr><td>Donald     </td><td>compound</td><td>Trump      </td></tr>
+<tr><td>John       </td><td>compound</td><td>Trump      </td></tr>
+<tr><td>Trump      </td><td>nsubj   </td><td>is         </td></tr>
+<tr><td>(          </td><td>punct   </td><td>Trump      </td></tr>
+<tr><td>born       </td><td>acl     </td><td>Trump      </td></tr>
+<tr><td>June       </td><td>npadvmod</td><td>born       </td></tr>
+<tr><td>14         </td><td>nummod  </td><td>June       </td></tr>
+<tr><td>,          </td><td>punct   </td><td>June       </td></tr>
+<tr><td>1946       </td><td>nummod  </td><td>June       </td></tr>
+<tr><td>)          </td><td>punct   </td><td>Trump      </td></tr>
+<tr><td>is         </td><td>ROOT    </td><td>is         </td></tr>
+<tr><td>the        </td><td>det     </td><td>45th       </td></tr>
+<tr><td>45th       </td><td>attr    </td><td>is         </td></tr>
+<tr><td>and        </td><td>cc      </td><td>45th       </td></tr>
+<tr><td>former     </td><td>amod    </td><td>president  </td></tr>
+<tr><td>president  </td><td>conj    </td><td>45th       </td></tr>
+<tr><td>of         </td><td>prep    </td><td>president  </td></tr>
+<tr><td>the        </td><td>det     </td><td>States     </td></tr>
+<tr><td>United     </td><td>compound</td><td>States     </td></tr>
+<tr><td>States     </td><td>pobj    </td><td>of         </td></tr>
+<tr><td>.          </td><td>punct   </td><td>is         </td></tr>
+<tr><td>           </td><td>dep     </td><td>.          </td></tr>
+<tr><td>Before     </td><td>prep    </td><td>was        </td></tr>
+<tr><td>entering   </td><td>pcomp   </td><td>Before     </td></tr>
+<tr><td>politics   </td><td>dobj    </td><td>entering   </td></tr>
+<tr><td>,          </td><td>punct   </td><td>was        </td></tr>
+<tr><td>he         </td><td>nsubj   </td><td>was        </td></tr>
+<tr><td>was        </td><td>ROOT    </td><td>was        </td></tr>
+<tr><td>a          </td><td>det     </td><td>businessman</td></tr>
+<tr><td>businessman</td><td>nmod    </td><td>personality</td></tr>
+<tr><td>and        </td><td>cc      </td><td>businessman</td></tr>
+<tr><td>television </td><td>compound</td><td>personality</td></tr>
+<tr><td>personality</td><td>attr    </td><td>was        </td></tr>
+<tr><td>.          </td><td>punct   </td><td>was        </td></tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output cell-output-display">
+<pre><code>None</code></pre>
+</div>
+</div>
+<section id="multilingual-nlp" class="level2">
+<h2 class="anchored" data-anchor-id="multilingual-nlp">Multilingual NLP</h2>
+<p>As can be inferred from the spaCy model we called this model is based on and targeted at the English language.</p>
+<p>One can use the spaCy website to select models to use for different usecases:</p>
+<p>https://spacy.io/usage/models</p>
+<p>But models for other languages are also available. Let’s try one out on a Dutch text:</p>
+<p>Because the Dutch model was trained in its particular way, there are differences with the English model.</p>
+<p>The most important is that the Dutch models do not offer lemmatization, the <code>lemma_</code> attribute returns the <code>orth_</code> attribute.</p>
+<p>NB. whenever numbers turn up in the tables that are generated, they refer to the ID’s of tokens in vectorspace. This usually means that we specified the attribute of a token <code>ent_iob</code> without the ending underscore: <code>ent_iob_</code>.</p>
+<p>If one is working with Dutch texts, then the Python library <strong>StanfordNLP</strong> that is build on top of PyTorchprovides a fully neural pipeline with lemmatization.</p>
+<p>Add a lookup based lemmatizer for Dutch:</p>
+<p>https://github.com/explosion/spaCy/blob/master/spacy/lang/de/tokenizer_exceptions.py</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

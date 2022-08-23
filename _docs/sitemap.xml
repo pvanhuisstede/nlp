@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://pvanhuisstede.github.io/nlp/word_embeddings.html</loc>
+    <lastmod>2022-08-23T14:29:27.300Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pvanhuisstede.github.io/nlp/pretrained_models.html</loc>
+    <lastmod>2022-08-23T14:29:27.528Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pvanhuisstede.github.io/nlp/text_classification_sklearn.html</loc>
+    <lastmod>2022-08-23T14:29:27.748Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pvanhuisstede.github.io/nlp/spacy_ner.html</loc>
+    <lastmod>2022-08-23T14:29:27.952Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pvanhuisstede.github.io/nlp/index.html</loc>
+    <lastmod>2022-08-23T14:29:28.140Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pvanhuisstede.github.io/nlp/ner_crf.html</loc>
+    <lastmod>2022-08-23T14:29:28.336Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pvanhuisstede.github.io/nlp/ner_pytorch.html</loc>
+    <lastmod>2022-08-23T14:29:28.556Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pvanhuisstede.github.io/nlp/discovering_topics.html</loc>
+    <lastmod>2022-08-23T14:29:28.744Z</lastmod>
+  </url>
+</urlset>

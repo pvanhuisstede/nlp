@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>nlp - An introduction to word embeddings</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="nlp - An introduction to word embeddings">
+<meta property="og:description" content="We use Gensim. We use the abstracts of all arXiv papers in the category cs.CL (CL: Computation and Language) published before mid-April 2021 (c.&nbsp;25_000 documents).">
+<meta property="og:site-name" content="nlp">
+<meta name="twitter:title" content="nlp - An introduction to word embeddings">
+<meta name="twitter:description" content="We use Gensim. We use the abstracts of all arXiv papers in the category cs.CL (CL: Computation and Language) published before mid-April 2021 (c.&nbsp;25_000 documents).">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">nlp</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/pvanhuisstede/nlp/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div class="quarto-toggle-container">
+                  <a href="" class="quarto-reader-toggle nav-link" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">An introduction to word embeddings</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">NLP Telematika tutorials</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./word_embeddings.html" class="sidebar-item-text sidebar-link active">An introduction to word embeddings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pretrained_models.html" class="sidebar-item-text sidebar-link">NLP with pre-trained models: spaCy and Stanford NLP</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./discovering_topics.html" class="sidebar-item-text sidebar-link">Discovering and Visualizing Topics in Texts</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./spacy_ner.html" class="sidebar-item-text sidebar-link">Updating spaCy’s NER system</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ner_crf.html" class="sidebar-item-text sidebar-link">NER with Conditional Random Fields (CRF)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ner_pytorch.html" class="sidebar-item-text sidebar-link">NER with PyTorch</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text_classification_sklearn.html" class="sidebar-item-text sidebar-link">“Traditional” Text Classification with Scikit-learn</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#training-word-embeddings" id="toc-training-word-embeddings" class="nav-link active" data-scroll-target="#training-word-embeddings">Training word embeddings</a>
+  <ul class="collapse">
+  <li><a href="#corpus" id="toc-corpus" class="nav-link" data-scroll-target="#corpus">Corpus</a></li>
+  </ul></li>
+  <li><a href="#using-word-embeddings" id="toc-using-word-embeddings" class="nav-link" data-scroll-target="#using-word-embeddings">Using word embeddings</a></li>
+  <li><a href="#plotting-embeddings" id="toc-plotting-embeddings" class="nav-link" data-scroll-target="#plotting-embeddings">Plotting embeddings</a></li>
+  <li><a href="#exploring-hyperparameters" id="toc-exploring-hyperparameters" class="nav-link" data-scroll-target="#exploring-hyperparameters">Exploring hyperparameters</a>
+  <ul class="collapse">
+  <li><a href="#evaluate" id="toc-evaluate" class="nav-link" data-scroll-target="#evaluate">evaluate</a></li>
+  </ul></li>
+  <li><a href="#conclusions" id="toc-conclusions" class="nav-link" data-scroll-target="#conclusions">Conclusions</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/pvanhuisstede/nlp/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">An introduction to word embeddings</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="training-word-embeddings" class="level2">
+<h2 class="anchored" data-anchor-id="training-word-embeddings">Training word embeddings</h2>
+<p>We use Gensim. We use the abstracts of all arXiv papers in the category cs.CL (CL: Computation and Language) published before mid-April 2021 (c.&nbsp;25_000 documents). We tokenize the abstracts with spaCy.</p>
+<hr>
+<section id="corpus" class="level3">
+<h3 class="anchored" data-anchor-id="corpus">Corpus</h3>
+<blockquote class="blockquote">
+<pre><code> Corpus (filename)</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+<p>Using Gensim we can set a number of parameters for training:</p>
+<ul>
+<li>min_count: the minimum frequency of words in our corpus</li>
+<li>window: number of words to the left and right to make up the context that word2vec will take into account</li>
+<li>vector_size: the dimensionality of the word vectors; usually between 100 and 1_000</li>
+<li>sg: One can choose fro 2 algorithms to train word2vec: Skip-gram (sg) tries to predict the context on the basis of the target word; CBOW tries to find the target on the basis of the context. Default is sg=0, hence: default is CBOW.</li>
+</ul>
+</section>
+</section>
+<section id="using-word-embeddings" class="level2">
+<h2 class="anchored" data-anchor-id="using-word-embeddings">Using word embeddings</h2>
+<p>With the model trained, we can access the word embedding via the <strong>wv attribute</strong> on model using the token as a key. For example the embedding for “nlp” is:</p>
+<p><strong>Find the similarity between two words.</strong> We use the cosine between two word embeddings, so we use a ranges between -1 and +1. The higher the cosine, the more similar two words are.</p>
+<p><strong>Find words that are most similar to target words</strong> we line up words via the embeddings: semantically related, other types of pre-tained models, related general models, and generally related words:</p>
+<p><strong>Look for words that are similar to something, but dissimilar to something else</strong> with this we can look for a kind of <strong>analogies</strong>:</p>
+<p>So a related transformer to lstm is rnn, just like bert is a particular type of transformer; really powerful.</p>
+<p>We can also zoom in on <strong>one of the meanings of ambiguous words</strong>. In NLP <strong>tree</strong> has a very specific meaning, is nearest neighbours being: constituency, parse, dependency, and syntax:</p>
+<p>If we add <strong>syntax</strong> as a negative input to the query, we see that the ordinary meaning of tree kicks in: Now forest is one of the nearest neighbours.</p>
+<p><strong>Throw a list of words at the model</strong> and filter out the odd one (here svm is the only non-neural model):</p>
+</section>
+<section id="plotting-embeddings" class="level2">
+<h2 class="anchored" data-anchor-id="plotting-embeddings">Plotting embeddings</h2>
+<p>About visualizing embeddings. We need to reduce our 100-dimensions space to 2-dimensions. We can use t-SNE method: map similar data to nearby points and dissimilar data to faraway points in low dimensional space.</p>
+<p>t-SNE is present in Scikit-learn. One has to specify two parameters: <strong>n_components</strong> (number of dimensions) and <strong>metric</strong> (similarity metric, here: cosine).</p>
+<p>In order NOT to overcrowd the image we use a subset of embeddings of 200 most similar words based on a <strong>target word</strong>.</p>
+</section>
+<section id="exploring-hyperparameters" class="level2">
+<h2 class="anchored" data-anchor-id="exploring-hyperparameters">Exploring hyperparameters</h2>
+<p>What is the quality of the embeddings? Should embeddings capture syntax or semantical relations. Semantic similarity or topical relations?</p>
+<p>One way of monitoring the quality is to check nearest neighbours: Are they two nouns, two verbs?</p>
+<hr>
+<section id="evaluate" class="level3">
+<h3 class="anchored" data-anchor-id="evaluate">evaluate</h3>
+<blockquote class="blockquote">
+<pre><code> evaluate (model, word2pos)</code></pre>
+</blockquote>
+<p>Now we want to change some of the settings we used above:</p>
+<ul>
+<li>embedding size (dimensions of the trained embeddings): 100, 200, 300</li>
+<li>context window: 2, 5, 10</li>
+</ul>
+<p>We will use a Pandas dataframe to keep track of the different scores (but this will take time: We train 9 models!!!):</p>
+<p>Results are close:</p>
+<ol type="1">
+<li>Smaller contexts seem to yield better results. Which makes sense because we work with the syntax - nearer words often produce more information.</li>
+<li>Higher dimension word embeddings not always work better than lower dimension. Here we have a relatively small corpus, not enough data for such higher dimensions.</li>
+</ol>
+<p>Let’s visualize our findings:</p>
+</section>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
+<p>Word embeddings allow us to model the usage and meaning of a word, and discover words that behave in a similar way.</p>
+<p>We move from raw strings -&gt; vector space: word embeddings which allows us to work with words that have a similar meaning and discover new patterns.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

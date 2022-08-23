@@ -18,8 +18,6 @@ website:
   title: "nlp"
   site-url: "https://pvanhuisstede.github.io/nlp/"
   description: "nbs exploring NLP"
-  execute: 
-    enabled: false
   twitter-card: true
   open-graph: true
   reader-mode: true

@@ -4,10 +4,10 @@
 __all__ = ['train_sents', 'dev_sents', 'test_sents', 'text_field', 'label_field', 'train_data', 'dev_data', 'test_data',
            'VOCAB_SIZE', 'device', 'BATCH_SIZE', 'train_iter', 'dev_iter', 'test_iter', 'EMBEDDING_PATH', 'embeddings',
            'embedding_matrix', 'EMBEDDING_DIM', 'HIDDEN_DIM', 'NUM_CLASSES', 'MAX_EPOCHS', 'PATIENCE', 'OUTPUT_PATH',
-           'num_batches', 'tagger', 'train_f', 'dev_f', 'labels', 'label_idxs', 'read_data', 'load_embeddings',
+           'num_batches', 'tagger', 'train_f', 'dev_f', 'df', 'labels', 'label_idxs', 'read_data', 'load_embeddings',
            'initialize_embeddings', 'BiLSTMTagger', 'remove_predictions_for_masked_items', 'train', 'test']
 
-# %% ../05_ner_pytorch.ipynb 3
+# %% ../05_ner_pytorch.ipynb 4
 import nltk
 
 train_sents = list(nltk.corpus.conll2002.iob_sents('ned.train'))
@@ -16,11 +16,11 @@ test_sents = list(nltk.corpus.conll2002.iob_sents('ned.testb'))
 
 train_sents[:3]
 
-# %% ../05_ner_pytorch.ipynb 5
+# %% ../05_ner_pytorch.ipynb 6
 #
 # %pip install -U torchtext==0.8.1 # Also installed torch-1.7.1, which meant uninstalling torchvision
 
-# %% ../05_ner_pytorch.ipynb 6
+# %% ../05_ner_pytorch.ipynb 7
 from torchtext.data import Example
 from torchtext.data import Field, Dataset
 
@@ -54,19 +54,19 @@ print("Train:", len(train_data))
 print("Dev:", len(dev_data))
 print("Test:", len(test_data))
 
-# %% ../05_ner_pytorch.ipynb 8
+# %% ../05_ner_pytorch.ipynb 9
 VOCAB_SIZE = 20_000
 
 text_field.build_vocab(train_data, max_size=VOCAB_SIZE)
 label_field.build_vocab(train_data)
 
-# %% ../05_ner_pytorch.ipynb 10
+# %% ../05_ner_pytorch.ipynb 11
 import torch
 
 device='cpu'
 print(device)
 
-# %% ../05_ner_pytorch.ipynb 12
+# %% ../05_ner_pytorch.ipynb 13
 from torchtext.data import BucketIterator
 
 BATCH_SIZE = 32
@@ -74,7 +74,7 @@ train_iter = BucketIterator(dataset=train_data, batch_size=BATCH_SIZE, shuffle=T
 dev_iter = BucketIterator(dataset=dev_data, batch_size=BATCH_SIZE, shuffle=True, sort_key=lambda x: len(x.text), sort_within_batch=True)
 test_iter = BucketIterator(dataset=test_data, batch_size=BATCH_SIZE, shuffle=True, sort_key=lambda x: len(x.text), sort_within_batch=True)
 
-# %% ../05_ner_pytorch.ipynb 14
+# %% ../05_ner_pytorch.ipynb 15
 import random
 import os
 import numpy as np
@@ -111,10 +111,10 @@ embeddings = load_embeddings(EMBEDDING_PATH)
 embedding_matrix = initialize_embeddings(embeddings, text_field.vocab)
 embedding_matrix = torch.from_numpy(embedding_matrix).to(device)
 
-# %% ../05_ner_pytorch.ipynb 15
+# %% ../05_ner_pytorch.ipynb 16
 embedding_matrix[0]
 
-# %% ../05_ner_pytorch.ipynb 18
+# %% ../05_ner_pytorch.ipynb 19
 import torch.nn as nn
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
@@ -151,7 +151,7 @@ class BiLSTMTagger(nn.Module):
         return logits
 
 
-# %% ../05_ner_pytorch.ipynb 20
+# %% ../05_ner_pytorch.ipynb 21
 import torch.optim as optim
 from tqdm import tqdm_notebook as tqdm
 from sklearn.metrics import precision_recall_fscore_support, classification_report
@@ -257,7 +257,7 @@ def train(model, train_iter, dev_iter, batch_size, max_epochs, num_batches, pati
         
     return train_f_score_history, dev_f_score_history
 
-# %% ../05_ner_pytorch.ipynb 22
+# %% ../05_ner_pytorch.ipynb 23
 def test(model, test_iter, batch_size, labels, target_names): 
     
     total_loss = 0
@@ -281,7 +281,7 @@ def test(model, test_iter, batch_size, labels, target_names):
     
     print(classification_report(correct, predictions, labels=labels, target_names=target_names))
 
-# %% ../05_ner_pytorch.ipynb 24
+# %% ../05_ner_pytorch.ipynb 25
 import math
 
 EMBEDDING_DIM = 300
@@ -297,10 +297,7 @@ tagger = BiLSTMTagger(EMBEDDING_DIM, HIDDEN_DIM, VOCAB_SIZE+2, NUM_CLASSES, embe
 train_f, dev_f = train(tagger.to(device), train_iter, dev_iter, BATCH_SIZE, MAX_EPOCHS, 
                        num_batches, PATIENCE, OUTPUT_PATH)
 
-# %% ../05_ner_pytorch.ipynb 26
-#%matplotlib notebook
-%matplotlib inline
-
+# %% ../05_ner_pytorch.ipynb 27
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -315,11 +312,11 @@ plt.plot('epochs', 'dev_f', data=df, color='green', linewidth=2)
 plt.legend()
 plt.show()
 
-# %% ../05_ner_pytorch.ipynb 28
+# %% ../05_ner_pytorch.ipynb 29
 tagger = torch.load(OUTPUT_PATH)
 tagger.eval()
 
-# %% ../05_ner_pytorch.ipynb 31
+# %% ../05_ner_pytorch.ipynb 32
 labels = label_field.vocab.itos[3:]
 labels = sorted(labels, key=lambda x: x.split("-")[-1])
 label_idxs = [label_field.vocab.stoi[l] for l in labels]

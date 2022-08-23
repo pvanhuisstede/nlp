@@ -1,0 +1,205 @@
+[
+  {
+    "objectID": "word_embeddings.html",
+    "href": "word_embeddings.html",
+    "title": "An introduction to word embeddings",
+    "section": "",
+    "text": "We use Gensim. We use the abstracts of all arXiv papers in the category cs.CL (CL: Computation and Language) published before mid-April 2021 (c. 25_000 documents). We tokenize the abstracts with spaCy.\n\n\n\n\n Corpus (filename)\n\nInitialize self. See help(type(self)) for accurate signature.\nUsing Gensim we can set a number of parameters for training:\n\nmin_count: the minimum frequency of words in our corpus\nwindow: number of words to the left and right to make up the context that word2vec will take into account\nvector_size: the dimensionality of the word vectors; usually between 100 and 1_000\nsg: One can choose fro 2 algorithms to train word2vec: Skip-gram (sg) tries to predict the context on the basis of the target word; CBOW tries to find the target on the basis of the context. Default is sg=0, hence: default is CBOW."
+  },
+  {
+    "objectID": "word_embeddings.html#using-word-embeddings",
+    "href": "word_embeddings.html#using-word-embeddings",
+    "title": "An introduction to word embeddings",
+    "section": "Using word embeddings",
+    "text": "Using word embeddings\nWith the model trained, we can access the word embedding via the wv attribute on model using the token as a key. For example the embedding for “nlp” is:\nFind the similarity between two words. We use the cosine between two word embeddings, so we use a ranges between -1 and +1. The higher the cosine, the more similar two words are.\nFind words that are most similar to target words we line up words via the embeddings: semantically related, other types of pre-tained models, related general models, and generally related words:\nLook for words that are similar to something, but dissimilar to something else with this we can look for a kind of analogies:\nSo a related transformer to lstm is rnn, just like bert is a particular type of transformer; really powerful.\nWe can also zoom in on one of the meanings of ambiguous words. In NLP tree has a very specific meaning, is nearest neighbours being: constituency, parse, dependency, and syntax:\nIf we add syntax as a negative input to the query, we see that the ordinary meaning of tree kicks in: Now forest is one of the nearest neighbours.\nThrow a list of words at the model and filter out the odd one (here svm is the only non-neural model):"
+  },
+  {
+    "objectID": "word_embeddings.html#plotting-embeddings",
+    "href": "word_embeddings.html#plotting-embeddings",
+    "title": "An introduction to word embeddings",
+    "section": "Plotting embeddings",
+    "text": "Plotting embeddings\nAbout visualizing embeddings. We need to reduce our 100-dimensions space to 2-dimensions. We can use t-SNE method: map similar data to nearby points and dissimilar data to faraway points in low dimensional space.\nt-SNE is present in Scikit-learn. One has to specify two parameters: n_components (number of dimensions) and metric (similarity metric, here: cosine).\nIn order NOT to overcrowd the image we use a subset of embeddings of 200 most similar words based on a target word."
+  },
+  {
+    "objectID": "word_embeddings.html#exploring-hyperparameters",
+    "href": "word_embeddings.html#exploring-hyperparameters",
+    "title": "An introduction to word embeddings",
+    "section": "Exploring hyperparameters",
+    "text": "Exploring hyperparameters\nWhat is the quality of the embeddings? Should embeddings capture syntax or semantical relations. Semantic similarity or topical relations?\nOne way of monitoring the quality is to check nearest neighbours: Are they two nouns, two verbs?\n\n\nevaluate\n\n evaluate (model, word2pos)\n\nNow we want to change some of the settings we used above:\n\nembedding size (dimensions of the trained embeddings): 100, 200, 300\ncontext window: 2, 5, 10\n\nWe will use a Pandas dataframe to keep track of the different scores (but this will take time: We train 9 models!!!):\nResults are close:\n\nSmaller contexts seem to yield better results. Which makes sense because we work with the syntax - nearer words often produce more information.\nHigher dimension word embeddings not always work better than lower dimension. Here we have a relatively small corpus, not enough data for such higher dimensions.\n\nLet’s visualize our findings:"
+  },
+  {
+    "objectID": "word_embeddings.html#conclusions",
+    "href": "word_embeddings.html#conclusions",
+    "title": "An introduction to word embeddings",
+    "section": "Conclusions",
+    "text": "Conclusions\nWord embeddings allow us to model the usage and meaning of a word, and discover words that behave in a similar way.\nWe move from raw strings -> vector space: word embeddings which allows us to work with words that have a similar meaning and discover new patterns."
+  },
+  {
+    "objectID": "pretrained_models.html",
+    "href": "pretrained_models.html",
+    "title": "NLP with pre-trained models: spaCy and Stanford NLP",
+    "section": "",
+    "text": "By applying the spaCy model we assigned to the variable en. We can generate a processed document wit spaCy, doc_en that has sentences and tokens:\nspaCy also identifies a number of linguistic features for every token: lemma, pos_ (the universal POS tags), and tag_(contains the more finegrained, language-specific POS tags):\nspaCy also offers pre-trained models for NER (Named Entity Recognition). The results can be found on the ent_iob_ and ent_type_ attributes.\nThe ent_type_ attribute informs us about what type of entity the token refers to: ‘Donald Trump’ => person, ‘June 14, 1946’ => date, ‘45th’ => ordinal number, and ‘the United States’ => GPE (Geo Political Entity).\nThe ent_iob_ attribute gives, by way of the letters ‘I,O,B’ the position of the token in the entity, where O means that the token is outside of an entity, B the entity is at the beginning of a token, and I means it is inside a token. So basically the IOB scheme gives you information about begin and parts of entities (positional).\nWe can access the recognized entities directly when we use the ents attribute of the document directly:\nOn top of all this, the spaCy model also has a dependency parser on board that analyzes the grammatical realtions between the tokens:\nWe display the results, kept in the variable syntax, in the usual way:"
+  },
+  {
+    "objectID": "pretrained_models.html#multilingual-nlp",
+    "href": "pretrained_models.html#multilingual-nlp",
+    "title": "NLP with pre-trained models: spaCy and Stanford NLP",
+    "section": "Multilingual NLP",
+    "text": "Multilingual NLP\nAs can be inferred from the spaCy model we called this model is based on and targeted at the English language.\nOne can use the spaCy website to select models to use for different usecases:\nhttps://spacy.io/usage/models\nBut models for other languages are also available. Let’s try one out on a Dutch text:\nBecause the Dutch model was trained in its particular way, there are differences with the English model.\nThe most important is that the Dutch models do not offer lemmatization, the lemma_ attribute returns the orth_ attribute.\nNB. whenever numbers turn up in the tables that are generated, they refer to the ID’s of tokens in vectorspace. This usually means that we specified the attribute of a token ent_iob without the ending underscore: ent_iob_.\nIf one is working with Dutch texts, then the Python library StanfordNLP that is build on top of PyTorchprovides a fully neural pipeline with lemmatization.\nAdd a lookup based lemmatizer for Dutch:\nhttps://github.com/explosion/spaCy/blob/master/spacy/lang/de/tokenizer_exceptions.py"
+  },
+  {
+    "objectID": "text_classification_sklearn.html",
+    "href": "text_classification_sklearn.html",
+    "title": "“Traditional” Text Classification with Scikit-learn",
+    "section": "",
+    "text": "We investigate techniques that predate deep learning trends in NLP, but are quick & effective ways of training a text classifier.\nWe use the 20 Newsgroups data set that is shipped with the Scikit-learn machine learning library.\nIt consists of 11_314 training texts and a test set of 7_532 texts."
+  },
+  {
+    "objectID": "text_classification_sklearn.html#pre-processing",
+    "href": "text_classification_sklearn.html#pre-processing",
+    "title": "“Traditional” Text Classification with Scikit-learn",
+    "section": "Pre-processing",
+    "text": "Pre-processing\nAlways the first step: transform the word seqs of the texts into feature vectors. Here we will use BOW approaches. We use CountVectorizer to construct vectors that tell us how often a word (or ngram) occurs in a text.\nHowever, texts contain a lot of uninteresting words. We use TF-IDF to hunt for words that appear often in a text, but not too often in the corpus as a whole using TfidfTransformer.\nIn order to get these weighted feature vectors we combine CountVectorizer and TfidfTransformer in a Pipeline."
+  },
+  {
+    "objectID": "text_classification_sklearn.html#training",
+    "href": "text_classification_sklearn.html#training",
+    "title": "“Traditional” Text Classification with Scikit-learn",
+    "section": "Training",
+    "text": "Training\nNow we can train a text classifier on the preprocessed training data. For the training we will experiment with 3 text classification models:\n\nNaive Bayes classifiers. Simple: They presume all features are independent of each other. They lear how frequent all classes are and how frequent each feature occurs in a class. In order to classify a new text, they multiply the probabilities for every feature xi given each class C and pick the class that gives the highest probability:\n\n\\[ \\hat{y} = argmax_k p(C_k) \\prod_{i=1}^{n}p(x_i | C_k) \\]\nThey are quick to train, but usually fall behind in terms of performance.\n\nSupport Vector Machines try to find the hyperplane in feature space that best separates the data from the different classes. They perform really well.\nLogistic Regression Models model the log-odds \\(l\\) or \\(log(p/(1-p))\\) of a class as a linear model and estimate the parameters \\(\\beta\\) of the model during training:\n\n\\[ l = \\beta_0 + \\sum_{i=1}^{n}\\beta_ix_i \\]\nVery good performance.\nIn order to find out how well each classifier performs, we use their predict method the label for all texts in our preprocessed test set."
+  },
+  {
+    "objectID": "text_classification_sklearn.html#grid-search",
+    "href": "text_classification_sklearn.html#grid-search",
+    "title": "“Traditional” Text Classification with Scikit-learn",
+    "section": "Grid search",
+    "text": "Grid search\nNot bad scores at all, but with the GridSearchCV module we can try to find the optimum hyperparameters:\nNow we can use to these outcomes to, again, calculate predictions on the test set:"
+  },
+  {
+    "objectID": "text_classification_sklearn.html#extensive-evaluation",
+    "href": "text_classification_sklearn.html#extensive-evaluation",
+    "title": "“Traditional” Text Classification with Scikit-learn",
+    "section": "Extensive evaluation",
+    "text": "Extensive evaluation\n\nDetailed scores\nSo far, we looked at the accuracy of our models: The proportion of test examples for which its prediction is correct. But where do things go wrong?\nWe start with:\n\nPrecision the number of times the classifier predicted a class correctly, divided by the total number of times it predicted this class\nRecall the proportion of documents with a given class that were labelled correctly by the classifier\nF1-score the harmonic mean between precision and recall: \\(2*P*R/(P + R)\\)\n\nLet’s generate the classification report:\n\n\nConfusion matrix\nWith this matrix we can visualize our results in even more detail. Really good at detecting the errors the classifier makes. Which classes are most often mixed up?\ntalk.politics.misc was 88 times incorrectly labelled as talk.politics.gun. comp.windows.x was 35 times incorrectly labelled as comp.graphics and 38 times as comp.os.ms.windows.misc.\nEven more insights can be get by using the eli5 library. What features get what weights per topic?"
+  },
+  {
+    "objectID": "spacy_ner.html",
+    "href": "spacy_ner.html",
+    "title": "Updating spaCy’s NER system",
+    "section": "",
+    "text": "Although pre-trained models are simple to use, we just have to plug them in, results will be disappointing when the data we work with differs, even slightly, from the data the model was trained on.\nSo, we want to be able to train our own model. SpaCy has us covered:\nLet’s look at a toy example:\nAlthough the spaCy NER is actually quite good, we want to train the model some more with extra training data. So that a word like “Brexit” for example is properly recognized. For this we do not use the actual sentence itself, too easy. But we will use similar sentences. Here we will use just a couple of sentences from Wikipedia.\nBelow are the 18 NER labels that spaCy uses:\nSo, we have this existing pre-trained spaCy model that we want to update with some new examples (ideally these should be around 200-300 examples).\nThese examples should be presented to spaCy as a list of tuples, that contain the text, and a dictionary of tuples, named entities that contains: the start and end indices of the named entity in the text, and the label of that named entity:\nBefore we set up the NER pipeline with the content of our training data, we make sure that we got the indices right:\nTo set thing up, let’s check if we have a NER in our pipeline:\nThat looks OK, now we assign the NER to a variable:\nNext step is to add these labels to the NER:\nNow we can start training, but only for the NER component of the pipeline, hence the following code snippet:\nIn order to properly train the NER model, we need to:\nLet’s check how our updated NER model now performs, using our earlier sentence:\nBetter, but we trained a little bit on the subject which is precisely why we, the RePubXL team, propose supervised ML on smaller contextual datasets. The power of these NER updates is that, based on the examples, the model can generalize due to the word-embeddings vectorspace.\nNow, we want to keep our updated model for future use:\nIn the cells above we started with a pre-trained model. One can also choose to start with an empty model, using spacy.blank(), passing in the “en” argument for the English language. Because it is an empty model, we have to add this ner to the pipeline using add_pipe(). We do not have to disable other pipelines, as we are just adding a new one, not changing an existing one.\nOne does have to use a large(r) number of training cases.\nJust a small example below:\nWe can use our new model to get more info and train it:"
+  },
+  {
+    "objectID": "spacy_ner.html#training-a-completely-new-entity-type-in-spacy",
+    "href": "spacy_ner.html#training-a-completely-new-entity-type-in-spacy",
+    "title": "Updating spaCy’s NER system",
+    "section": "Training a completely new entity type in spaCy",
+    "text": "Training a completely new entity type in spaCy\nAll code above was directed at training the ner to categorize correctly, either adjusting a pre-trained model or starting from a new blank model and adjusting that as one goes.\nBut what to do if you want to work with a category that is NOT defined?\nWe have to train the model:\n\nfirst add the new label with ner.add_label()\nResume training\nSelect the pipes to be trained\nSingle out the pipes NOT to be trained\n\nWith the training complete, let’s test our ner:"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "NLP Telematika tutorials",
+    "section": "",
+    "text": "NLP 101:\n\n00_word_embeddings.ipynb (An introduction to word embeddings)\n01_pretrained_models.ipynb (NLP with pre-trained models from spaCy and StanfordNLP)\n02_discovering_topics.ipynb (Discovering and visualizing topics in texts with LDA)\n\nNamed Entity Recognition (NER)\n\n03_spacy_ner.ipynb (Updating spaCy’s NER system)"
+  },
+  {
+    "objectID": "ner_crf.html",
+    "href": "ner_crf.html",
+    "title": "NER with Conditional Random Fields (CRF)",
+    "section": "",
+    "text": "CRF is a powerful technique before Deep Learning became popular. POS tagging of sequences in order to label the most important information related to the problem at hand: generic named entities (locations, people, and organizations) or more specialized entities such as disease or symptomes.\nFor this we use sklearn-crfsuite.\nI guess, due to the upsurge of Deep Learning the sklearn-crfsuite is not updated anymore. So instead of the snippet below, we have to install an updated version of the library to be able to produce reports:\nData comes from NLTK:\nLet’s have a look at the data. They are a list of tokenized sentences: the string, POS tag and it’s entity tag. Nowadays the POS tag is not used in deep learning, but with CRF it provides useful information: Nouns are more common denoting entities than verbs, so the POS tags carry useful information.\nHow does CRF work? Deep learning neural nets just learn their relevant features from the input texts themselves. CRFs learn the realtionship between the features we give them and the label of a token in a given context. They do not learn these features themselves, the quality of the model highly depends on the features we present to them.\nWe therefore:"
+  },
+  {
+    "objectID": "ner_crf.html#finding-the-optimal-hyperparameters",
+    "href": "ner_crf.html#finding-the-optimal-hyperparameters",
+    "title": "NER with Conditional Random Fields (CRF)",
+    "section": "Finding the optimal hyperparameters",
+    "text": "Finding the optimal hyperparameters\nSo far we’ve trained a model with the default parameters. It’s unlikely that these will give us the best performance possible. Therefore we’re going to search automatically for the best hyperparameter settings by iteratively training different models and evaluating them. Eventually we’ll pick the best one.\nHere we’ll focus on two parameters: c1 and c2. These are the parameters for L1 and L2 regularization, respectively. Regularization prevents overfitting on the training data by adding a penalty to the loss function. In L1 regularization, this penalty is the sum of the absolute values of the weights; in L2 regularization, it is the sum of the squared weights. L1 regularization performs a type of feature selection, as it assigns 0 weight to irrelevant features. L2 regularization, by contrast, makes the weight of irrelevant features small, but not necessarily zero. L1 regularization is often called the Lasso method, L2 is called the Ridge method, and the linear combination of both is called Elastic Net regularization.\nWe define the parameter space for c1 and c2 and use the flat F1-score to compare the individual models. We’ll rely on three-fold cross validation to score each of the 50 candidates. We use a randomized search, which means we’re not going to try out all specified parameter settings, but instead, we’ll let the process sample randomly from the distributions we’ve specified in the parameter space. It will do this 50 (n_iter) times. This process takes a while, but it’s worth the wait.\nRuns now, since we installed a venv conda py38! But it uses scikit-learn 1.1.1 Duh?"
+  },
+  {
+    "objectID": "ner_pytorch.html",
+    "href": "ner_pytorch.html",
+    "title": "NER with PyTorch",
+    "section": "",
+    "text": "We will use the same, Dutch, datasets from NLTK we used in the previous notebook:\nNext, we have to pre-process the data. We can use torchtext for this. It is a Python library for pre-processing of natural language. We want our data to be a dataset that consists of examples.\nEach example has two fields: A text filed and a label field. Both consist of sequential information: Tokens and labels."
+  },
+  {
+    "objectID": "ner_pytorch.html#training",
+    "href": "ner_pytorch.html#training",
+    "title": "NER with PyTorch",
+    "section": "Training",
+    "text": "Training\nBucketIterator takes care of a lot of details for our training runs:\n\ncreates batches of similar length examples in the data\nmaps the words and labels to the correct indices in their vocabularies\npads the sentences in order to have sentences of the same length (using minimal padding; see first bullet)"
+  },
+  {
+    "objectID": "ner_pytorch.html#pre-trained-embeddings",
+    "href": "ner_pytorch.html#pre-trained-embeddings",
+    "title": "NER with PyTorch",
+    "section": "Pre-trained embeddings",
+    "text": "Pre-trained embeddings\nPre-trained embeddings are useful to improve the performance of a model, especially if there is little training data. We use “meaning” from a larger dataset to sharpen our model: Better generalize between semantically related words.\nFor this we use FastText embeddings:\n\ndownload a vec file with the embeddings that we use to initialize our embedding matrix\nwe create a matrix filled with zeros of which the number of rows == the number of words in our vocabulary; the number of cols == the number of FasText vectors (300)\nwe must be sure that the FastText embedding for a particular word is in the correct row: The row whose index corresponds to the index of the word in the vocabulary.\n\n\n\ninitialize_embeddings\n\n initialize_embeddings (embeddings, vocabulary)\n\nUse the pre-trained embeddings to initialize an embedding matrix.\n\n\n\nload_embeddings\n\n load_embeddings (path)\n\nLoad the FastText embeddings from the NL embeddings file."
+  },
+  {
+    "objectID": "ner_pytorch.html#caveat",
+    "href": "ner_pytorch.html#caveat",
+    "title": "NER with PyTorch",
+    "section": "Caveat",
+    "text": "Caveat\nUsing Python 3.9 with somewhat older PyTorch and torchtext libraries on GPU caused Jupyter Kernel crash due to incompatible GPU specs. Updated to newest PyTorch & torchtext for GPU specs did crash the Notebook environment.\nThen ran the code on Python 3.8. Explicitely setting torchtext to 0.81 and torch to 1.17 and running on the CPU. Seem stable.\nI do not think we will need to build our own CNN’s. First of all, because some of the software we are working with already has this capacity build in (spaCy: Retraining NER entities), but, more importantly, we concentrate on supervised ML in well described (smaller) doamins instead of all out deep learning.\nIf we were to dive in DL we must make sure that all these layers are stable over a longer period."
+  },
+  {
+    "objectID": "ner_pytorch.html#create-the-bilstm-model",
+    "href": "ner_pytorch.html#create-the-bilstm-model",
+    "title": "NER with PyTorch",
+    "section": "Create the BiLSTM model",
+    "text": "Create the BiLSTM model\nThe BiLSTM model consists of 4 layers:\n\nAn embedding layer that maps one-hot vectors to dense word embeddings (pre-trained or trained from scratch);\nA bi-directional LSTM layer that reads text b2f and f2b. For each word 2 output vectors are produced hidden_dim that are concatenated in a vector 2*hidden_dim;\nA dropout layer that helps to prevent overfitting by dropping a certain percentage of the items in the LSTM output;\nA dense layer that projects the LSTM output to an output vector with a dimensionality == number of labels.\n\n\n\nBiLSTMTagger\n\n BiLSTMTagger (embedding_dim, hidden_dim, vocab_size, output_size,\n               embeddings=None)\n\nBase class for all neural network modules.\nYour models should also subclass this class.\nModules can also contain other Modules, allowing to nest them in a tree structure. You can assign the submodules as regular attributes::\nimport torch.nn as nn\nimport torch.nn.functional as F\n\nclass Model(nn.Module):\n    def __init__(self):\n        super(Model, self).__init__()\n        self.conv1 = nn.Conv2d(1, 20, 5)\n        self.conv2 = nn.Conv2d(20, 20, 5)\n\n    def forward(self, x):\n        x = F.relu(self.conv1(x))\n        return F.relu(self.conv2(x))\nSubmodules assigned in this way will be registered, and will have their parameters converted too when you call :meth:to, etc.\n:ivar training: Boolean represents whether this module is in training or evaluation mode. :vartype training: bool"
+  },
+  {
+    "objectID": "ner_pytorch.html#training-1",
+    "href": "ner_pytorch.html#training-1",
+    "title": "NER with PyTorch",
+    "section": "Training",
+    "text": "Training\nNow that we have our model, we need to train it. For that we need to make a couple of decisions:\n\nwe pick a loss function (aka criterion) to quantify how far the model predictions are from the correct output. In the context of NER this often is CrossEntropyLoss;\nwe need to choose an optimizer. In NLP: Adam optimizer (SGD variation).\n\nThen the actual training starts. This happens in several epochs. During each epoch, we show all of the training data to the network, in the batches produced by the BucketIterators we created above. Before we show the model a new batch, we set the gradients of the model to zero to avoid accumulating gradients across batches. Then we let the model make its predictions for the batch. We do this by taking the output, and finding out what label received the highest score, using the torch.max method. We then compute the loss with respect to the correct labels. loss.backward() then computes the gradients for all model parameters; optimizer.step() performs an optimization step.\nWhen we have shown all the training data in an epoch, we perform the precision, recall and F-score on the training data and development data. Note that we compute the loss for the development data, but we do not optimize the model with it. Whenever the F-score on the development data is better than before, we save the model. If the F-score is lower than the minimum F-score we’ve seen in the past few epochs (we call this number the patience), we stop training.\n\n\ntrain\n\n train (model, train_iter, dev_iter, batch_size, max_epochs, num_batches,\n        patience, output_path)\n\n\n\n\nremove_predictions_for_masked_items\n\n remove_predictions_for_masked_items (predicted_labels, correct_labels)\n\nLet’s prepare to test the model, taking the same steps as above:\n\nget the predictions;\nremove the masked items;\nprint a classification report.\n\n\n\n\ntest\n\n test (model, test_iter, batch_size, labels, target_names)\n\nAfter all these steps, we can start to actually train the model:\n\nset embedding dimension to 300 (FastText dimensionality);\npick a hidden dimensionality for each component of the BiLSTM (outputs 512-dim vectors);\nthe number of classes (== length of the vocabulary of the label field) will become the dimesionality of the output layer;\ncompute the number of batches in an epoch in order to show a progress bar.\n\nF-score does not improve anymore. Let’s plot the F-scores for our training and development sets. We aim for reaching an optimal F-score on the development data:\nBefore we test our model on the test data, we have to run its eval() method. This will put the model in eval mode, and deactivate dropout layers and other functionality that is only useful in training:\nFinally we are ready to test the model. It’s performance is lower than our CRF model (04_ner_crf.ipynb). It is not only the code that grew compared to the earlier CRF model, but also the extra work we still have to do:\n\nmake the architecture of the network more complex\noptimize the hyperparameters\nthrow a lot more data at the model"
+  },
+  {
+    "objectID": "ner_pytorch.html#testing-our-model",
+    "href": "ner_pytorch.html#testing-our-model",
+    "title": "NER with PyTorch",
+    "section": "Testing our model",
+    "text": "Testing our model"
+  },
+  {
+    "objectID": "ner_pytorch.html#conclusion",
+    "href": "ner_pytorch.html#conclusion",
+    "title": "NER with PyTorch",
+    "section": "Conclusion",
+    "text": "Conclusion\nIn this notebook we’ve trained a simple bidirectional LSTM for named entity recognition. Far from achieving state-of-the-art performance, our aim was to understand how neural networks can be implemented and trained in PyTorch. To improve our performance, one of the things that is typically done is to add an additional CRF layer to the neural network. This layer helps us optimize the complete label sequence, and not the labels individually. We leave that for future work."
+  },
+  {
+    "objectID": "discovering_topics.html",
+    "href": "discovering_topics.html",
+    "title": "Discovering and Visualizing Topics in Texts",
+    "section": "",
+    "text": "Often texts are just that: texts without metadata and labels that tell us what the texts are about. We can use unsupervised ML, topic models, in such cases to find out about the topics discussed in the texts.\nTopics: Groups of related words that often occur together in texts. Topic models can find clusters of related words. The humans interpret these clusters and assign them labels.\nPopular topic model: Latent Dirichlet Allocation (LDA). It uses a prior distribution topics in a text will have (Dirichlet probability distribution). LDA is often used to model open-ended survey questions.\nHere we will use the data from the Grand Debat Nationale in France.\nWe will focus on the contents of the last, open question of the questionnaire:"
+  },
+  {
+    "objectID": "discovering_topics.html#preprocessing",
+    "href": "discovering_topics.html#preprocessing",
+    "title": "Discovering and Visualizing Topics in Texts",
+    "section": "Preprocessing",
+    "text": "Preprocessing\nBefore we can train a model, we need to tokenize the texts. For this we use the spaCy NLP library. The author uses a blank model (does not work anymore).\nThe are 4 NaN’s in the first 10 answers, so we throw these out and keep all the texts in the target column.\nNext we use spaCy to perform the first pre-processing pass:\nNow we have a list of spaCy documents that we need to transform into a list of tokens. We will work with lemmatized tokens in order to be able to work with the lemmas. So, these are the following pre-processing steps:\n\nremove all words < 3 characters (interesting for sentiment analysis, but no so much for topic analysis)\ndrop all stopwords\ntake the lemmas of all remaining words and lowercase them\n\ndocs is a list of lists. The lists contain the lemmas of the answers of the survey participants.\nBut we want to take frequent bigrams into account when topic modelling. In tge French language they often carry important meaning (“poids lourds” = “trucks”).\nFor this we use the Python Gensim library:\n\nidentify frequent bigrams in the corpus\nappend these to the list of tokens for the documents in which they appear\n\nLets have a look at the fifth document:\nPerfect, we have found two frequently used (over the corpus) in this particular document of the corpus.\nNext, the final Gensim-specific pre-processing steps:\n\ncreate a dictionary representation of the documents; the dictionary will map each word to an unique ID so that we can make BoW representations of each document. The dictionary will contain ids of words in documents and their frequency;\nwe can remove the least and most frequent words from the vocabulary (faster, better quality). We express the min freq as an absolute number, the max freq is the proportion of documents a word is allowed to occur in:\n\nNext, we create bag-of-word (BoW) representations for each of our documents in the corpus:"
+  },
+  {
+    "objectID": "discovering_topics.html#training",
+    "href": "discovering_topics.html#training",
+    "title": "Discovering and Visualizing Topics in Texts",
+    "section": "Training",
+    "text": "Training"
+  },
+  {
+    "objectID": "discovering_topics.html#results",
+    "href": "discovering_topics.html#results",
+    "title": "Discovering and Visualizing Topics in Texts",
+    "section": "Results",
+    "text": "Results\nWhat did the model learn? We start by printing out the 10 words that were most characteristic for each of the topics. Some of the topics are general, but others more precise:\nSome interesting topics:\n\nagriculture (topic 1)\nvehicles (topic 2)\nenergy (topic 4)\nwaste and recycling (topic 8)\ntax incentives (topic 9)\n\nLet’s check the topics the model assigns to some individual documents. LDA assigns a high probability to a low number of topics for each document:"
+  }
+]

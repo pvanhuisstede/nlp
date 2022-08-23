@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>nlp - “Traditional” Text Classification with Scikit-learn</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="nlp - “Traditional” Text Classification with Scikit-learn">
+<meta property="og:description" content="We investigate techniques that predate deep learning trends in NLP, but are quick &amp; effective ways of training a text classifier.">
+<meta property="og:site-name" content="nlp">
+<meta name="twitter:title" content="nlp - “Traditional” Text Classification with Scikit-learn">
+<meta name="twitter:description" content="We investigate techniques that predate deep learning trends in NLP, but are quick &amp; effective ways of training a text classifier.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">nlp</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/pvanhuisstede/nlp/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div class="quarto-toggle-container">
+                  <a href="" class="quarto-reader-toggle nav-link" onclick="window.quartoToggleReader(); return false;" title="Toggle reader mode">
+  <div class="quarto-reader-toggle-btn">
+  <i class="bi"></i>
+  </div>
+</a>
+              </div>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">“Traditional” Text Classification with Scikit-learn</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">NLP Telematika tutorials</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./word_embeddings.html" class="sidebar-item-text sidebar-link">An introduction to word embeddings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pretrained_models.html" class="sidebar-item-text sidebar-link">NLP with pre-trained models: spaCy and Stanford NLP</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./discovering_topics.html" class="sidebar-item-text sidebar-link">Discovering and Visualizing Topics in Texts</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./spacy_ner.html" class="sidebar-item-text sidebar-link">Updating spaCy’s NER system</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ner_crf.html" class="sidebar-item-text sidebar-link">NER with Conditional Random Fields (CRF)</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./ner_pytorch.html" class="sidebar-item-text sidebar-link">NER with PyTorch</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./text_classification_sklearn.html" class="sidebar-item-text sidebar-link active">“Traditional” Text Classification with Scikit-learn</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#data" id="toc-data" class="nav-link active" data-scroll-target="#data">Data</a></li>
+  <li><a href="#pre-processing" id="toc-pre-processing" class="nav-link" data-scroll-target="#pre-processing">Pre-processing</a></li>
+  <li><a href="#training" id="toc-training" class="nav-link" data-scroll-target="#training">Training</a></li>
+  <li><a href="#grid-search" id="toc-grid-search" class="nav-link" data-scroll-target="#grid-search">Grid search</a></li>
+  <li><a href="#extensive-evaluation" id="toc-extensive-evaluation" class="nav-link" data-scroll-target="#extensive-evaluation">Extensive evaluation</a>
+  <ul class="collapse">
+  <li><a href="#detailed-scores" id="toc-detailed-scores" class="nav-link" data-scroll-target="#detailed-scores">Detailed scores</a></li>
+  <li><a href="#confusion-matrix" id="toc-confusion-matrix" class="nav-link" data-scroll-target="#confusion-matrix">Confusion matrix</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/pvanhuisstede/nlp/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">“Traditional” Text Classification with Scikit-learn</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>We investigate techniques that predate deep learning trends in NLP, but are quick &amp; effective ways of training a text classifier.</p>
+<p>We use the 20 Newsgroups data set that is shipped with the <strong>Scikit-learn machine learning library</strong>.</p>
+<p>It consists of 11_314 training texts and a test set of 7_532 texts.</p>
+</section>
+<section id="pre-processing" class="level2">
+<h2 class="anchored" data-anchor-id="pre-processing">Pre-processing</h2>
+<p><strong>Always the first step</strong>: transform the word seqs of the texts into feature vectors. Here we will use BOW approaches. We use <code>CountVectorizer</code> to construct vectors that tell us how often a word (or ngram) occurs in a text.</p>
+<p>However, texts contain a lot of <strong>uninteresting</strong> words. We use TF-IDF to hunt for words that appear often in a text, but not too often in the corpus as a whole using <code>TfidfTransformer</code>.</p>
+<p>In order to get these <strong>weighted feature vectors</strong> we combine <code>CountVectorizer</code> and <code>TfidfTransformer</code> in a <code>Pipeline</code>.</p>
+</section>
+<section id="training" class="level2">
+<h2 class="anchored" data-anchor-id="training">Training</h2>
+<p>Now we can train a <strong>text classifier</strong> on the preprocessed training data. For the training we will experiment with 3 text classification models:</p>
+<ol type="1">
+<li><strong>Naive Bayes</strong> classifiers. Simple: They presume all features are independent of each other. They lear how frequent all classes are and how frequent each feature occurs in a class. In order to classify a new text, they multiply the probabilities for every feature xi given each class C and pick the class that gives the highest probability:</li>
+</ol>
+<p><span class="math display">\[ \hat{y} = argmax_k p(C_k) \prod_{i=1}^{n}p(x_i | C_k) \]</span></p>
+<p>They are quick to train, but usually fall behind in terms of performance.</p>
+<ol start="2" type="1">
+<li><p><strong>Support Vector Machines</strong> try to find the <strong>hyperplane</strong> in feature space that best separates the data from the different classes. They perform really well.</p></li>
+<li><p><strong>Logistic Regression Models</strong> model the log-odds <span class="math inline">\(l\)</span> or <span class="math inline">\(log(p/(1-p))\)</span> of a class as a linear model and estimate the parameters <span class="math inline">\(\beta\)</span> of the model during training:</p></li>
+</ol>
+<p><span class="math display">\[ l = \beta_0 + \sum_{i=1}^{n}\beta_ix_i \]</span></p>
+<p>Very good performance.</p>
+<p>In order to find out how well each classifier performs, we use their <code>predict</code> method the label for all texts in our preprocessed test set.</p>
+</section>
+<section id="grid-search" class="level2">
+<h2 class="anchored" data-anchor-id="grid-search">Grid search</h2>
+<p>Not bad scores at all, but with the <code>GridSearchCV</code> module we can try to find the optimum hyperparameters:</p>
+<p>Now we can use to these outcomes to, again, calculate predictions on the test set:</p>
+</section>
+<section id="extensive-evaluation" class="level2">
+<h2 class="anchored" data-anchor-id="extensive-evaluation">Extensive evaluation</h2>
+<section id="detailed-scores" class="level3">
+<h3 class="anchored" data-anchor-id="detailed-scores">Detailed scores</h3>
+<p>So far, we looked at the accuracy of our models: The proportion of test examples for which its prediction is correct. But where do things go wrong?</p>
+<p>We start with:</p>
+<ol type="1">
+<li><strong>Precision</strong> the number of times the classifier predicted a class correctly, divided by the total number of times it predicted this class</li>
+<li><strong>Recall</strong> the proportion of documents with a given class that were labelled correctly by the classifier</li>
+<li><strong>F1-score</strong> the harmonic mean between precision and recall: <span class="math inline">\(2*P*R/(P + R)\)</span></li>
+</ol>
+<p>Let’s generate the classification report:</p>
+</section>
+<section id="confusion-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="confusion-matrix">Confusion matrix</h3>
+<p>With this matrix we can visualize our results in even more detail. Really good at detecting the errors the classifier makes. Which classes are most often mixed up?</p>
+<p><code>talk.politics.misc</code> was 88 times incorrectly labelled as <code>talk.politics.gun</code>. <code>comp.windows.x</code> was 35 times incorrectly labelled as <code>comp.graphics</code> and 38 times as <code>comp.os.ms.windows.misc</code>.</p>
+<p>Even more insights can be get by using the <code>eli5</code> library. What features get what weights per topic?</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

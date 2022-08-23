@@ -3,19 +3,19 @@
 # %% auto 0
 __all__ = ['train_data', 'test_data', 'preprocessing', 'train_preprocessed', 'test_preprocessed', 'nb_classifier',
            'lr_classifier', 'svm_classifier', 'nb_predictions', 'lr_predictions', 'svm_predictions', 'parameters',
-           'lr_best', 'svm_best', 'best_svm_predictions', 'best_lr_predictions']
-
-# %% ../06_text_classification_sklearn.ipynb 3
-from sklearn.datasets import fetch_20newsgroups
+           'lr_best', 'svm_best', 'best_svm_predictions', 'best_lr_predictions', 'conf_matrix', 'conf_matrix_df']
 
 # %% ../06_text_classification_sklearn.ipynb 4
+from sklearn.datasets import fetch_20newsgroups
+
+# %% ../06_text_classification_sklearn.ipynb 5
 train_data = fetch_20newsgroups(subset='train', shuffle=True, random_state=42)
 test_data = fetch_20newsgroups(subset='test')
 
 print('Training texts: ', len(train_data.data))
 print('Test texts: ', len(test_data.data))
 
-# %% ../06_text_classification_sklearn.ipynb 6
+# %% ../06_text_classification_sklearn.ipynb 7
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.pipeline import Pipeline
@@ -30,7 +30,7 @@ train_preprocessed = preprocessing.fit_transform(train_data.data)
 print('Preprocessing test data...')
 test_preprocessed = preprocessing.transform(test_data.data)
 
-# %% ../06_text_classification_sklearn.ipynb 8
+# %% ../06_text_classification_sklearn.ipynb 9
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.svm import LinearSVC
 from sklearn.linear_model import LogisticRegression
@@ -48,12 +48,12 @@ lr_classifier.fit(train_preprocessed, train_data.target)
 print('Training the SVM classifier...')
 svm_classifier.fit(train_preprocessed, train_data.target)
 
-# %% ../06_text_classification_sklearn.ipynb 10
+# %% ../06_text_classification_sklearn.ipynb 11
 nb_predictions = nb_classifier.predict(test_preprocessed)
 lr_predictions = lr_classifier.predict(test_preprocessed)
 svm_predictions = svm_classifier.predict(test_preprocessed)
 
-# %% ../06_text_classification_sklearn.ipynb 11
+# %% ../06_text_classification_sklearn.ipynb 12
 # Let's check the prediction scores for each classifier
 import numpy as np
 
@@ -61,7 +61,7 @@ print("NB Accuracy:", np.mean(nb_predictions == test_data.target))
 print("LR Accuracy:", np.mean(lr_predictions == test_data.target))
 print("SVM Accuracy:", np.mean(svm_predictions == test_data.target))
 
-# %% ../06_text_classification_sklearn.ipynb 13
+# %% ../06_text_classification_sklearn.ipynb 14
 from sklearn.model_selection import GridSearchCV
 
 parameters = {'C': np.logspace(0, 3, 10)}
@@ -75,25 +75,24 @@ print("Grid search for SVM")
 svm_best = GridSearchCV(svm_classifier, parameters, cv=3, verbose=1)
 svm_best.fit(train_preprocessed, train_data.target)
 
-# %% ../06_text_classification_sklearn.ipynb 14
+# %% ../06_text_classification_sklearn.ipynb 15
 # Let's see what hyperparameters lead to the best result
 
 print(f'Best SVM params: {svm_best.best_params_}')
 print(f'Best LR params: {lr_best.best_params_}')
 
-# %% ../06_text_classification_sklearn.ipynb 16
+# %% ../06_text_classification_sklearn.ipynb 17
 best_svm_predictions = svm_best.predict(test_preprocessed)
 best_lr_predictions = lr_best.predict(test_preprocessed)
 
 print("Best SVM Accuracy:", np.mean(best_svm_predictions == test_data.target))
 print("Best LR Accuracy:", np.mean(best_lr_predictions == test_data.target))
 
-# %% ../06_text_classification_sklearn.ipynb 18
+# %% ../06_text_classification_sklearn.ipynb 19
 from sklearn.metrics import classification_report, confusion_matrix
 print(classification_report(test_data.target, best_svm_predictions, target_names=test_data.target_names))
 
-# %% ../06_text_classification_sklearn.ipynb 20
-%matplotlib inline
+# %% ../06_text_classification_sklearn.ipynb 21
 import pandas as pd
 import seaborn as sn
 import matplotlib.pyplot as plt
@@ -107,7 +106,7 @@ plt.yticks(rotation=0)
 plt.xticks(rotation=90)
 
 
-# %% ../06_text_classification_sklearn.ipynb 22
+# %% ../06_text_classification_sklearn.ipynb 23
 import eli5
 
 eli5.explain_weights(svm_best.best_estimator_, 

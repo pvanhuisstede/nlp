@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['train_data', 'test_data', 'preprocessing', 'train_preprocessed', 'test_preprocessed', 'nb_classifier',
            'lr_classifier', 'svm_classifier', 'nb_predictions', 'lr_predictions', 'svm_predictions', 'parameters',
-           'lr_best', 'svm_best']
+           'lr_best', 'svm_best', 'best_svm_predictions', 'best_lr_predictions']
 
 # %% ../06_text_classification_sklearn.ipynb 3
 from sklearn.datasets import fetch_20newsgroups
@@ -80,3 +80,37 @@ svm_best.fit(train_preprocessed, train_data.target)
 
 print(f'Best SVM params: {svm_best.best_params_}')
 print(f'Best LR params: {lr_best.best_params_}')
+
+# %% ../06_text_classification_sklearn.ipynb 16
+best_svm_predictions = svm_best.predict(test_preprocessed)
+best_lr_predictions = lr_best.predict(test_preprocessed)
+
+print("Best SVM Accuracy:", np.mean(best_svm_predictions == test_data.target))
+print("Best LR Accuracy:", np.mean(best_lr_predictions == test_data.target))
+
+# %% ../06_text_classification_sklearn.ipynb 18
+from sklearn.metrics import classification_report, confusion_matrix
+print(classification_report(test_data.target, best_svm_predictions, target_names=test_data.target_names))
+
+# %% ../06_text_classification_sklearn.ipynb 20
+%matplotlib inline
+import pandas as pd
+import seaborn as sn
+import matplotlib.pyplot as plt
+
+conf_matrix = confusion_matrix(test_data.target, best_svm_predictions)
+conf_matrix_df = pd.DataFrame(conf_matrix, index=test_data.target_names, columns=test_data.target_names)
+
+plt.figure(figsize=(15, 10))
+sn.heatmap(conf_matrix_df, annot=True, vmin=0, vmax=conf_matrix.max(), fmt='d', cmap='YlGnBu')
+plt.yticks(rotation=0)
+plt.xticks(rotation=90)
+
+
+# %% ../06_text_classification_sklearn.ipynb 22
+import eli5
+
+eli5.explain_weights(svm_best.best_estimator_, 
+                     feature_names = preprocessing.named_steps["vect"].get_feature_names(),
+                     target_names = train_data.target_names
+                    )

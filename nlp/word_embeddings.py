@@ -45,6 +45,9 @@ model.wv.most_similar(positive=["transformer", "lstm"], negative=["bert"], topn=
 # %% ../00_word_embeddings.ipynb 15
 model.wv.most_similar(positive=["tree"], topn=10)
 
+# %% ../00_word_embeddings.ipynb 17
+model.wv.most_similar(positive=["tree"], negative=["syntax"], topn=10)
+
 # %% ../00_word_embeddings.ipynb 19
 print(model.wv.doesnt_match("lst cnn gru transformer svm".split()))
 
@@ -111,3 +114,6 @@ for size in sizes:
         df[size][window] = acc
         
 df
+
+# %% ../00_word_embeddings.ipynb 29
+df.plot()

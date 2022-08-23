@@ -3,9 +3,11 @@ website:
     contents:
       - index.ipynb
       - 00_word_embeddings.ipynb
-      - 01_pretrained_models.ipynb
-      - 02_discovering_topics.ipynb
-      - 03_spacy_ner.ipynb
-      - 04_ner_crf.ipynb
-      - 05_ner_pytorch.ipynb
-      - 06_text_classification_sklearn.ipynb
+      - section: refactor
+        contents:
+          - refactor/01_pretrained_models.ipynb
+          - refactor/02_discovering_topics.ipynb
+          - refactor/03_spacy_ner.ipynb
+          - refactor/04_ner_crf.ipynb
+          - refactor/05_ner_pytorch.ipynb
+          - refactor/06_text_classification_sklearn.ipynb

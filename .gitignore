@@ -132,3 +132,4 @@ dmypy.json
 
 # Generated PDF files for printing
 *.pdf
+PrintCode/*

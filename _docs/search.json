@@ -1,0 +1,44 @@
+[
+  {
+    "objectID": "word_embeddings.html",
+    "href": "word_embeddings.html",
+    "title": "An introduction to word embeddings",
+    "section": "",
+    "text": "We use Gensim. We use the abstracts of all arXiv papers in the category cs.CL (CL: Computation and Language) published before mid-April 2021 (c. 25_000 documents). We tokenize the abstracts with spaCy.\n\n#! export\nimport sys\nimport os\nimport csv\nimport spacy\nimport gensim\n\nclass Corpus(object):\n    def __init__(self, filename):\n        self.filename = filename\n        self.nlp = spacy.blank(\"en\")\n\n    def __iter__(self):\n        with open(self.filename, \"r\") as i:\n            reader = csv.reader(i, delimiter=',')\n            for _, abstract in reader:\n                tokens = [t.text.lower() for t in self.nlp(abstract)]\n                yield tokens\n\ndocuments = Corpus(\"/home/peter/Documents/data/nlp/arxiv.csv\")\nmodel = gensim.models.Word2Vec(documents, min_count=100, window=5, vector_size=100)\n\nUsing Gensim we can set a number of parameters for training:\n\nmin_count: the minimum frequency of words in our corpus\nwindow: number of words to the left and right to make up the context that word2vec will take into account\nvector_size: the dimensionality of the word vectors; usually between 100 and 1_000\nsg: One can choose fro 2 algorithms to train word2vec: Skip-gram (sg) tries to predict the context on the basis of the target word; CBOW tries to find the target on the basis of the context. Default is sg=0, hence: default is CBOW."
+  },
+  {
+    "objectID": "word_embeddings.html#using-word-embeddings",
+    "href": "word_embeddings.html#using-word-embeddings",
+    "title": "An introduction to word embeddings",
+    "section": "Using word embeddings",
+    "text": "Using word embeddings\nWith the model trained, we can access the word embedding via the wv attribute on model using the token as a key. For example the embedding for “nlp” is:\nFind the similarity between two words. We use the cosine between two word embeddings, so we use a ranges between -1 and +1. The higher the cosine, the more similar two words are.\nFind words that are most similar to target words we line up words via the embeddings: semantically related, other types of pre-tained models, related general models, and generally related words:\nLook for words that are similar to something, but dissimilar to something else with this we can look for a kind of analogies:\nSo a related transformer to lstm is rnn, just like bert is a particular type of transformer; really powerful.\nWe can also zoom in on one of the meanings of ambiguous words. In NLP tree has a very specific meaning, is nearest neighbours being: constituency, parse, dependency, and syntax:\nIf we add syntax as a negative input to the query, we see that the ordinary meaning of tree kicks in: Now forest is one of the nearest neighbours.\nThrow a list of words at the model and filter out the odd one (here svm is the only non-neural model):"
+  },
+  {
+    "objectID": "word_embeddings.html#plotting-embeddings",
+    "href": "word_embeddings.html#plotting-embeddings",
+    "title": "An introduction to word embeddings",
+    "section": "Plotting embeddings",
+    "text": "Plotting embeddings\nAbout visualizing embeddings. We need to reduce our 100-dimensions space to 2-dimensions. We can use t-SNE method: map similar data to nearby points and dissimilar data to faraway points in low dimensional space.\nt-SNE is present in Scikit-learn. One has to specify two parameters: n_components (number of dimensions) and metric (similarity metric, here: cosine).\nIn order NOT to overcrowd the image we use a subset of embeddings of 200 most similar words based on a target word."
+  },
+  {
+    "objectID": "word_embeddings.html#exploring-hyperparameters",
+    "href": "word_embeddings.html#exploring-hyperparameters",
+    "title": "An introduction to word embeddings",
+    "section": "Exploring hyperparameters",
+    "text": "Exploring hyperparameters\nWhat is the quality of the embeddings? Should embeddings capture syntax or semantical relations. Semantic similarity or topical relations?\nOne way of monitoring the quality is to check nearest neighbours: Are they two nouns, two verbs?\n\n\nevaluate\n\n evaluate (model, word2pos)\n\nNow we want to change some of the settings we used above:\n\nembedding size (dimensions of the trained embeddings): 100, 200, 300\ncontext window: 2, 5, 10\n\nWe will use a Pandas dataframe to keep track of the different scores (but this will take time: We train 9 models!!!):\nResults are close:\n\nSmaller contexts seem to yield better results. Which makes sense because we work with the syntax - nearer words often produce more information.\nHigher dimension word embeddings not always work better than lower dimension. Here we have a relatively small corpus, not enough data for such higher dimensions.\n\nLet’s visualize our findings:"
+  },
+  {
+    "objectID": "word_embeddings.html#conclusions",
+    "href": "word_embeddings.html#conclusions",
+    "title": "An introduction to word embeddings",
+    "section": "Conclusions",
+    "text": "Conclusions\nWord embeddings allow us to model the usage and meaning of a word, and discover words that behave in a similar way.\nWe move from raw strings -> vector space: word embeddings which allows us to work with words that have a similar meaning and discover new patterns."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "NLP Telematika tutorials",
+    "section": "",
+    "text": "NLP 101:\n\n00_word_embeddings.ipynb (An introduction to word embeddings)\n01_pretrained_models.ipynb (NLP with pre-trained models from spaCy and StanfordNLP)\n02_discovering_topics.ipynb (Discovering and visualizing topics in texts with LDA)\n\nNamed Entity Recognition (NER)\n\n03_spacy_ner.ipynb (Updating spaCy’s NER system)"
+  }
+]

@@ -2,10 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://pvanhuisstede.github.io/nlp/word_embeddings.html</loc>
-    <lastmod>2022-08-29T09:57:24.040Z</lastmod>
+    <lastmod>2022-08-29T19:17:56.794Z</lastmod>
+  </url>
+  <url>
+    <loc>https://pvanhuisstede.github.io/nlp/pretrained_models.html</loc>
+    <lastmod>2022-08-29T19:17:57.038Z</lastmod>
   </url>
   <url>
     <loc>https://pvanhuisstede.github.io/nlp/index.html</loc>
-    <lastmod>2022-08-29T09:58:43.436Z</lastmod>
+    <lastmod>2022-08-29T19:17:57.226Z</lastmod>
   </url>
 </urlset>

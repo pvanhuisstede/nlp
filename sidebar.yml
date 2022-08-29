@@ -3,3 +3,4 @@ website:
     contents:
       - index.ipynb
       - 00_word_embeddings.ipynb
+      - 01_pretrained_models.ipynb

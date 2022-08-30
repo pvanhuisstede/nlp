@@ -4,3 +4,4 @@ website:
       - index.ipynb
       - 00_word_embeddings.ipynb
       - 01_pretrained_models.ipynb
+      - 02_discovering_topics.ipynb

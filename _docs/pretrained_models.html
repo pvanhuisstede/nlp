@@ -199,6 +199,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <a href="./pretrained_models.html" class="sidebar-item-text sidebar-link active">NLP with pre-trained models: spaCy and Stanford NLP</a>
   </div>
 </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./discovering_topics.html" class="sidebar-item-text sidebar-link">Discovering and Visualizing Topics in Texts</a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -212,6 +217,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul>
   <li><a href="#combining-spacy-and-stanza" id="toc-combining-spacy-and-stanza" class="nav-link" data-scroll-target="#combining-spacy-and-stanza">Combining spaCy and Stanza</a></li>
   </ul></li>
+  <li><a href="#variables-in-this-notebook" id="toc-variables-in-this-notebook" class="nav-link" data-scroll-target="#variables-in-this-notebook">Variables in this Notebook</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/pvanhuisstede/nlp/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -302,14 +308,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>If one is working with Dutch texts, then the Python library <strong>stanza</strong> is the one to use (in the Telematika notebook the stanfordnlp library is used, but this library is not recommended anymore.)</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we ran 'stanza.download('nl') in the terminal</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>nl_nlp <span class="op">=</span> stanza.Pipeline(<span class="st">'nl'</span>, use_gpu<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>nl_nlp <span class="op">=</span> stanza.Pipeline(<span class="st">'nl'</span>, use_gpu<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-[{"model_id":"c12ed76f27b54f37b56a647c71670aad","version_major":2,"version_minor":0}]
+[{"model_id":"49df5b87eaf3432ea77753ce821f127d","version_major":2,"version_minor":0}]
 </script>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>2022-08-29 16:39:16 INFO: Loading these models for language: nl (Dutch):
+<pre><code>2022-08-30 15:56:49 INFO: Loading these models for language: nl (Dutch):
 =======================
 | Processor | Package |
 -----------------------
@@ -320,19 +326,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 | ner       | conll02 |
 =======================
 
-2022-08-29 16:39:16 INFO: Use device: cpu
-2022-08-29 16:39:16 INFO: Loading: tokenize
-2022-08-29 16:39:16 INFO: Loading: pos
-2022-08-29 16:39:16 INFO: Loading: lemma
-2022-08-29 16:39:16 INFO: Loading: depparse
-2022-08-29 16:39:17 INFO: Loading: ner
-2022-08-29 16:39:17 INFO: Done loading processors!</code></pre>
+2022-08-30 15:56:49 INFO: Use device: cpu
+2022-08-30 15:56:49 INFO: Loading: tokenize
+2022-08-30 15:56:49 INFO: Loading: pos
+2022-08-30 15:56:50 INFO: Loading: lemma
+2022-08-30 15:56:50 INFO: Loading: depparse
+2022-08-30 15:56:50 INFO: Loading: ner
+2022-08-30 15:56:50 INFO: Done loading processors!</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>doc_nl_stanza <span class="op">=</span> nl_nlp(text_nl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Still get this to work with GPU, but so far, so good. We now have access, via the model, to text and lemma, but also to the attributes <code>upos</code>, <code>xpos</code>, <code>govenor</code>, and <code>dependency_relation</code>.</p>
+<p>Got it working with the GPU. The thing is that the PyTorch stuff should be installed via Conda (not Pip) and that this is completely independent of the system76 CUDA stuff. The trick is to throw away all Pip installed stuff (torch, torchvision, torchaudio) and use the following conda command to install an cuda ensemble: ‘conda install pytorch torchvision torchaudio cudatoolkit=11.2 -c pytorch -c nvidia’.</p>
+<p>We now have access, via the model, to text and lemma, but also to the attributes <code>upos</code>, <code>xpos</code>, <code>govenor</code>, and <code>dependency_relation</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>stanza_info <span class="op">=</span> []</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> sentence <span class="kw">in</span> doc_nl_stanza.sentences:</span>
@@ -371,14 +378,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="combining-spacy-and-stanza">Combining spaCy and Stanza</h3>
 <p>Thanks to the spacy-stanza wrapper we can combine the 2 libraries in pipelines. First we install <code>spacy_stanza</code> with Pip.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nlp_spacy_stanza <span class="op">=</span> spacy_stanza.load_pipeline(<span class="st">'nl'</span>, use_gpu<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nlp_spacy_stanza <span class="op">=</span> spacy_stanza.load_pipeline(<span class="st">'nl'</span>, use_gpu<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <script type="application/vnd.jupyter.widget-view+json">
-[{"model_id":"b9b73465a11d4102a8bc99bfa49f3d10","version_major":2,"version_minor":0}]
+[{"model_id":"5333022c68d74714945b2b5eed60c1fd","version_major":2,"version_minor":0}]
 </script>
 </div>
 <div class="cell-output cell-output-stderr">
-<pre><code>2022-08-29 21:00:33 INFO: Loading these models for language: nl (Dutch):
+<pre><code>2022-08-30 16:02:21 INFO: Loading these models for language: nl (Dutch):
 =======================
 | Processor | Package |
 -----------------------
@@ -389,13 +396,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 | ner       | conll02 |
 =======================
 
-2022-08-29 21:00:33 INFO: Use device: cpu
-2022-08-29 21:00:33 INFO: Loading: tokenize
-2022-08-29 21:00:33 INFO: Loading: pos
-2022-08-29 21:00:33 INFO: Loading: lemma
-2022-08-29 21:00:33 INFO: Loading: depparse
-2022-08-29 21:00:33 INFO: Loading: ner
-2022-08-29 21:00:34 INFO: Done loading processors!</code></pre>
+2022-08-30 16:02:21 INFO: Use device: cpu
+2022-08-30 16:02:21 INFO: Loading: tokenize
+2022-08-30 16:02:21 INFO: Loading: pos
+2022-08-30 16:02:21 INFO: Loading: lemma
+2022-08-30 16:02:21 INFO: Loading: depparse
+2022-08-30 16:02:21 INFO: Loading: ner
+2022-08-30 16:02:22 INFO: Done loading processors!</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -426,9 +433,165 @@ geheugen geheug NOUN obj
 (Mark Rutte, Nederland, VVD)</code></pre>
 </div>
 </div>
-
-
 </section>
+</section>
+<section id="variables-in-this-notebook" class="level2">
+<h2 class="anchored" data-anchor-id="variables-in-this-notebook">Variables in this Notebook</h2>
+<table class="table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 22%">
+<col style="width: 16%">
+<col style="width: 27%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Cell #</th>
+<th>Size</th>
+<th>Value(s)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>doc_en</td>
+<td>Doc</td>
+<td></td>
+<td>34</td>
+<td>Donald John Trump …</td>
+</tr>
+<tr class="even">
+<td>doc_nl</td>
+<td>Doc</td>
+<td></td>
+<td>18</td>
+<td>Mark Rutte is …</td>
+</tr>
+<tr class="odd">
+<td>doc_nl_stanza</td>
+<td>Document</td>
+<td></td>
+<td></td>
+<td>[[ {“id”: 1, “text”: “Mark”, }]]</td>
+</tr>
+<tr class="even">
+<td>doc_nlp_spacy_stanza</td>
+<td>Doc</td>
+<td></td>
+<td>19</td>
+<td>Mark Rutte is …</td>
+</tr>
+<tr class="odd">
+<td>en</td>
+<td>English</td>
+<td></td>
+<td></td>
+<td>&lt;spacy.lang.en.English …&gt;</td>
+</tr>
+<tr class="even">
+<td>entities</td>
+<td>list</td>
+<td></td>
+<td>34</td>
+<td>[(‘Donald’, ‘B’, ‘PERSON’), (‘John’, ‘I’, ‘PERSON’), ]</td>
+</tr>
+<tr class="odd">
+<td>features</td>
+<td>list</td>
+<td></td>
+<td>34</td>
+<td>[[‘Donald’, ‘Donald’, ‘PROPN’, ‘NNP’], ]</td>
+</tr>
+<tr class="even">
+<td>info</td>
+<td>list</td>
+<td></td>
+<td>18</td>
+<td>[(‘Mark’, ‘PROPN’, ’SPEC</td>
+</tr>
+<tr class="odd">
+<td>nl</td>
+<td>Dutch</td>
+<td></td>
+<td></td>
+<td>&lt;spacy.lang.nl.Dutch object at &gt;</td>
+</tr>
+<tr class="even">
+<td>nl_nlp</td>
+<td>Pipeline</td>
+<td></td>
+<td></td>
+<td>&lt;stanza.pipeline.core &gt;</td>
+</tr>
+<tr class="odd">
+<td>nlp_spacy_stanza</td>
+<td>Dutch</td>
+<td></td>
+<td></td>
+<td>&lt;spacy.lang.nl.Dutch object at &gt;</td>
+</tr>
+<tr class="even">
+<td>sentence</td>
+<td>Sentence</td>
+<td></td>
+<td></td>
+<td>[{“id”: 1, “text”: “Hij”, “lemma”: “hij”, “upos”: …}]</td>
+</tr>
+<tr class="odd">
+<td>stanza_info</td>
+<td>list</td>
+<td></td>
+<td>18</td>
+<td>[(1, ‘Mark’, ‘Mark’, ‘PROPN’, …), ]</td>
+</tr>
+<tr class="even">
+<td>syntax</td>
+<td>list</td>
+<td></td>
+<td>34</td>
+<td>[[‘Donald’, ‘compound’, ‘Trump’], …]</td>
+</tr>
+<tr class="odd">
+<td>text</td>
+<td>str</td>
+<td></td>
+<td>169</td>
+<td>’Donald John Trump …</td>
+</tr>
+<tr class="even">
+<td>text_nl</td>
+<td>str</td>
+<td></td>
+<td>94</td>
+<td>‘Mark Rutte is de …’</td>
+</tr>
+<tr class="odd">
+<td>token</td>
+<td>Token</td>
+<td></td>
+<td>1</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>tokens</td>
+<td>list</td>
+<td></td>
+<td>34</td>
+<td>[[Donald], [John], …]</td>
+</tr>
+<tr class="odd">
+<td>word</td>
+<td>Word</td>
+<td></td>
+<td></td>
+<td>{‘id’: 11, ‘text’: “.”, “lemma”: …, }</td>
+</tr>
+</tbody>
+</table>
+
+
 </section>
 
 </main> <!-- /main -->

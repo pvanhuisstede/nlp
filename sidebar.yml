@@ -5,3 +5,5 @@ website:
       - 00_word_embeddings.ipynb
       - 01_pretrained_models.ipynb
       - 02_discovering_topics.ipynb
+      - 03_spacy_ner.ipynb
+      - 04_ner_crf.ipynb

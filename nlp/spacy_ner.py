@@ -9,6 +9,10 @@ __all__ = ['ner_lst', 'train_data', 'ner', 'pipe_exceptions', 'unaffected_pipes'
 from IPython.display import display_html
 import tabulate
 import spacy
+import random
+from spacy.util import minibatch, compounding
+from pathlib import Path
+from spacy.training import Example
 
 # %% ../03_spacy_ner.ipynb 8
 ner_lst = nlp.pipe_labels['ner']
@@ -38,11 +42,6 @@ pipe_exceptions = ["ner", "trf_wordpiecer", "trf_tok2vec"]
 unaffected_pipes = [pipe for pipe in nlp.pipe_names if pipe not in pipe_exceptions]
 
 # %% ../03_spacy_ner.ipynb 22
-import random
-from spacy.util import minibatch, compounding
-from pathlib import Path
-from spacy.training import Example
-
 with nlp.disable_pipes(*unaffected_pipes):
   for iteration in range(10):
     random.shuffle(train_data)
@@ -94,7 +93,7 @@ ruler = nlp.add_pipe("entity_ruler")
 
 #List of Entities and Patterns
 patterns = [
-                {"label": "GPE", "pattern": "Treblinka"}
+            {"label": "GPE", "pattern": "Treblinka"}
             ]
 
 ruler.add_patterns(patterns)
@@ -129,7 +128,7 @@ ruler = nlp.add_pipe("entity_ruler")
 
 #List of Entities and Patterns
 patterns = [
-                {"label": "GPE", "pattern": "Treblinka"}
+            {"label": "GPE", "pattern": "Treblinka"}
             ]
 
 ruler.add_patterns(patterns)
@@ -166,7 +165,7 @@ LABEL = "FOOD"
 # Training examples in the required format
 TRAIN_DATA =[ ("Pizza is a common fast food.", {"entities": [(0, 5, "FOOD")]}),
               ("Pasta is an italian recipe", {"entities": [(0, 5, "FOOD")]}),
-              ("China's noodles are very famous", {"entities": [(8,14, "FOOD")]}),
+              ("China's noodles are very famous", {"entities": [(8,15, "FOOD")]}),
               ("Shrimps are famous in China too", {"entities": [(0,7, "FOOD")]}),
               ("Lasagna is another classic of Italy", {"entities": [(0,7, "FOOD")]}),
               ("Sushi is extemely famous and expensive Japanese dish", {"entities": [(0,5, "FOOD")]}),
@@ -195,10 +194,6 @@ pipe_exceptions = ["ner", "trf_wordpiecer", "trf_tok2vec"]
 other_pipes = [pipe for pipe in nlp.pipe_names if pipe not in pipe_exceptions]
 
 # %% ../03_spacy_ner.ipynb 37
-# Importing requirements
-from spacy.util import minibatch, compounding
-import random
-
 # Begin training by disabling other pipeline components
 
 with nlp.disable_pipes(*other_pipes):

@@ -7,3 +7,6 @@ website:
       - 02_discovering_topics.ipynb
       - 03_spacy_ner.ipynb
       - 04_ner_crf.ipynb
+      - 06_text_classification_sklearn.ipynb
+      - 07_simple_sentence_similarity.ipynb
+      - 08_data_exploration_sentence_similarity.ipynb

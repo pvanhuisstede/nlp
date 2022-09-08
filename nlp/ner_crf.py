@@ -13,6 +13,12 @@ from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.preprocessing import LabelBinarizer
 import sklearn_crfsuite as crfsuite
 from sklearn_crfsuite import metrics
+import joblib
+import os
+import eli5
+import scipy
+from sklearn.metrics import make_scorer
+from sklearn.model_selection import RandomizedSearchCV
 
 # %% ../04_ner_crf.ipynb 7
 #nltk.download('conll2002') # Just run this line once
@@ -127,9 +133,6 @@ crf = crfsuite.CRF(
 crf.fit(X_train, y_train, X_dev=X_dev, y_dev=y_dev)
 
 # %% ../04_ner_crf.ipynb 20
-import joblib
-import os
-
 OUTPUT_PATH = '/home/peter/Documents/data/nlp/models'
 OUTPUT_FILE = 'crf_model'
 
@@ -159,11 +162,7 @@ sorted_labels = sorted(
 # Here: pip install git+https://github.com/MeMartijn/updated-sklearn-crfsuite.git\#egg=sklearn_crfsuite
 print(metrics.flat_classification_report(y_test, y_pred, labels=sorted_labels))
 
-# %% ../04_ner_crf.ipynb 28
-import scipy
-from sklearn.metrics import make_scorer
-from sklearn.model_selection import RandomizedSearchCV
-
+# %% ../04_ner_crf.ipynb 29
 crf = crfsuite.CRF(
   algorithm='lbfgs',
   max_iterations=100,

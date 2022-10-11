@@ -20,7 +20,6 @@ website:
   description: "Nbs exploring Telematika tutorials on NLP"
   twitter-card: true
   open-graph: true
-  reader-mode: true
   repo-branch: master
   repo-url: "https://github.com/pvanhuisstede/nlp"
   repo-actions: [issue]

@@ -10,3 +10,4 @@ website:
       - 06_text_classification_sklearn.ipynb
       - 07_simple_sentence_similarity.ipynb
       - 08_data_exploration_sentence_similarity.ipynb
+      - sid_rule_based_nlp.ipynb

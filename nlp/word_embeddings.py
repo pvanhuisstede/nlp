@@ -30,7 +30,7 @@ class Corpus(object):
                 tokens = [t.text.lower() for t in self.nlp(abstract)]
                 yield tokens
 
-documents = Corpus("/home/peter/Documents/data/nlp/arxiv.csv")
+documents = Corpus("/home/peter/data/nlp/arxiv.csv")
 model = gensim.models.Word2Vec(documents, min_count=100, window=5, vector_size=100) # We use the default CBOW algorithm
 
 # %% ../00_word_embeddings.ipynb 8

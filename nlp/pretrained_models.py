@@ -63,7 +63,7 @@ for sentence in doc_nl_stanza.sentences:
     stanza_info.append((len(stanza_info)+1, word.text, word.lemma, word.pos, word.upos, word.xpos, word.deprel))
 
 # %% ../01_pretrained_models.ipynb 34
-nlp_spacy_stanza = spacy_stanza.load_pipeline('nl', use_gpu=False)
+nlp_spacy_stanza = spacy_stanza.load_pipeline('nl', use_gpu=True)
 
 # %% ../01_pretrained_models.ipynb 35
 doc_nlp_spacy_stanza = nlp_spacy_stanza("Mark Rutte is minister-president van Nederland." "Hij is van de VVD en heeft een slecht actief geheugen.")
